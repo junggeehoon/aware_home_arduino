@@ -21,11 +21,11 @@ struct_message myData;
 esp_now_peer_info_t peerInfo;
 
 bool checkAppleWatch(uint8_t cManufacturerData[]) {
-  return cManufacturerData[0] == 0x4C && cManufacturerData[1] == 0x00 && cManufacturerData[2] == 0x10 && cManufacturerData[3] == 0x05 && cManufacturerData[5] == 0x18;
+  return cManufacturerData[0] == 0x4C && cManufacturerData[1] == 0x00 && cManufacturerData[2] == 0x10 && cManufacturerData[3] == 0x05 && cManufacturerData[5] == 0x98;
 }
 
 void sendData(int rssi) {
-  myData.id = 9;
+  myData.id = 0;
   myData.rssi = rssi;
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
    
@@ -40,36 +40,16 @@ void sendData(int rssi) {
 class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
   void onResult(BLEAdvertisedDevice advertisedDevice) {
 
-    const char* macAddress = advertisedDevice.getAddress().toString().c_str();
-    const char* targetMacAddress = "a0:38:f8:b9:62:de";
+    std::string strManufacturerData = advertisedDevice.getManufacturerData();
+    uint8_t cManufacturerData[100];
+    strManufacturerData.copy((char *)cManufacturerData, strManufacturerData.length(), 0);
 
-    if (strcmp(macAddress, targetMacAddress) == 0) {
+    if (checkAppleWatch(cManufacturerData)) {
       int rssi = advertisedDevice.getRSSI();
-      Serial.println(rssi);
-    } 
-
-    // uint8_t cManufacturerData[100];
-    // strManufacturerData.copy((char *)cManufacturerData, strManufacturerData.length(), 0);
-    // if (cManufacturerData[0] == 0xA0) {
-    //   Serial.println(advertisedDevice.toString().c_str());
-    // }
-    // Serial.println(advertisedDevice.getAddress().toString().c_str());
-    // Serial.println(advertisedDevice.toString().c_str());
-    // string strManufacturerData = advertisedDevice.getManufacturerData();
-
-    // uint8_t cManufacturerData[100];
-    // strManufacturerData.copy((char *)cManufacturerData, strManufacturerData.length(), 0);
-    // if (checkAppleWatch(cManufacturerData)) {
-    //   int rssi = advertisedDevice.getRSSI();
-    //   Serial.println(rssi);
-    //   // Serial.println(advertisedDevice.toString().c_str());
-    //   // if (rssi > -70) {
-        
-    //   // }
-      
-    //   // sendData(rssi);
-    //   return;
-    // }
+      // Serial.println(rssi);
+      sendData(rssi);
+      return;
+    }
   }
 };
 
@@ -117,5 +97,5 @@ void setup() {
 void loop() {
   BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
   pBLEScan->clearResults();
-  delay(1000);
+  delay(2000);
 }
