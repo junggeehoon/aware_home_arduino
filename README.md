@@ -5,7 +5,7 @@ This project forms a part of [The Aware Home](https://gvu.gatech.edu/research/la
 The system scans Bluetooth signals emitted by an Apple Watch to determine its location. Various prediction models, including Random Forest, Support Vector Machine, and K-Nearest Neighbors, were utilized.
 
 ## Project Directory
-1. **BLE_scan**: Contains file for bluetooth scan.
+1. **BLE_scan**: Contains file for bluetooth scanning.
 2. **Receiver**: Contains file for receiver.
 
 
@@ -17,4 +17,4 @@ Change `broadcastAddress` to align with the appropriate receiver's address if ne
 
 
 ### Receiver
-1. Open the file located at `./Receiver/receiver.ino` and upload the sketch to ESP32.
+Open the file located at `./Receiver/receiver.ino` and upload the sketch to ESP32.
